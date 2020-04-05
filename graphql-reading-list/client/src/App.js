@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 
@@ -13,10 +13,9 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <div className="App">
-        <h1>React App</h1>
+      <Fragment>
         <BookList />
-      </div>
+      </Fragment>
     </ApolloProvider>
   );
 }
