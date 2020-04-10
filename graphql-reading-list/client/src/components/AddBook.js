@@ -6,6 +6,8 @@ const AddBook = () => {
   const { data, loading, error } = useQuery(GET_AUTHORS);
   const [addBook] = useMutation(ADD_BOOK);
 
+  const [displayError, setDisplayError] = useState(false);
+
   const [formState, setFormState] = useState({
     name: "",
     genre: "",
@@ -14,7 +16,7 @@ const AddBook = () => {
 
   if (loading) return <div> Loading...</div>;
   if (error) return <div>ERROR</div>;
-  if (!data) return <div>Not found</div>;
+  if (!data) return <div>No book added</div>;
 
   const displayAuthors = () => {
     if (data.loading) {
@@ -30,25 +32,36 @@ const AddBook = () => {
     }
   };
 
+  const displayErrorMessage = () => {
+    return <p id="error">Please enter all details</p>;
+  };
   const submitFormData = (e) => {
     e.preventDefault();
-    console.log(formState);
-    addBook({
-      variables: {
-        name: formState.name,
-        genre: formState.genre,
-        authorId: formState.authorId,
-      },
-      refetchQueries: [
-        {
-          query: GET_BOOKS,
+    if (
+      formState.name !== "" ||
+      formState.genre !== "" ||
+      formState.authorId !== ""
+    ) {
+      addBook({
+        variables: {
+          name: formState.name,
+          genre: formState.genre,
+          authorId: formState.authorId,
         },
-      ],
-    });
+        refetchQueries: [
+          {
+            query: GET_BOOKS,
+          },
+        ],
+      });
+    } else {
+      setDisplayError(true);
+    }
   };
 
   return (
     <form id="add-book">
+      {displayError ? displayErrorMessage() : null}
       <div className="field">
         <label>Book name:</label>
         <input
@@ -78,6 +91,7 @@ const AddBook = () => {
           {displayAuthors()}
         </select>
       </div>
+
       <button onClick={submitFormData}>+</button>
     </form>
   );
